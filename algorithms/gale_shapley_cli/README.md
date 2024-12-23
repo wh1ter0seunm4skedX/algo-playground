@@ -1,53 +1,58 @@
-# Gale-Shapley CLI Visualizer
+# Gale-Shapley Algorithm Visualizer
 
-This project implements the Gale-Shapley algorithm to find stable matches between two groups (men and women) based on their preferences. It includes a command-line interface (CLI) that allows users to input preferences and visualize the matching process.
+Interactive CLI visualization of the Gale-Shapley stable matching algorithm.
 
-## Project Structure
+## Features
 
-```
-gale_shapley_cli
-├── src
-│   ├── gale_shapley.py       # Implementation of the Gale-Shapley algorithm
-│   ├── cli.py                # Command-line interface for user interaction
-│   └── __init__.py           # Marks the directory as a Python package
-├── requirements.txt           # Lists project dependencies
-└── README.md                  # Project documentation
-```
+- 🎯 Step-by-step algorithm visualization
+- 🎨 Colored terminal output
+- ⚡ Interactive progression
+- 📊 Clear state representation
+- 💾 Example data included
 
 ## Installation
 
-To get started, clone the repository and navigate to the project directory. Then, install the required dependencies using:
+```bash
+# Create virtual environment
+python -m venv venv
 
-```
+# Activate virtual environment
+# Windows
+venv\Scripts\activate
+# Unix/MacOS
+source venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 ## Usage
 
-To run the CLI visualizer, execute the following command:
-
-```
+1. Edit preferences in `data.py` (optional)
+2. Run the visualizer:
+```bash
 python src/cli.py
 ```
 
-You will be prompted to enter the preferences for men and women in the following format:
+## Data Format
 
-- Men preferences: `{"man1": ["woman1", "woman2"], "man2": ["woman2", "woman1"]}`
-- Women preferences: `{"woman1": ["man1", "man2"], "woman2": ["man2", "man1"]}`
+Example format in `data.py`:
+```python
+men_preferences = {
+    "1": ["A", "B", "C", "D"],
+    "2": ["A", "D", "B", "C"],
+}
 
-After entering the preferences, the program will display the matching process and the final engagements.
-
-## Example
-
-Here is an example of how to input preferences:
-
+women_preferences = {
+    "A": ["1", "3", "4", "2"],
+    "B": ["2", "1", "3", "4"],
+}
 ```
-Men Preferences: {"A": ["X", "Y"], "B": ["Y", "X"]}
-Women Preferences: {"X": ["B", "A"], "Y": ["A", "B"]}
-```
 
-The output will show the step-by-step matching process and the final engagements.
+## Dependencies
+
+- Python 3.6+
+- colorama
 
 ## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
+MIT
