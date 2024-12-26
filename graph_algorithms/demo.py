@@ -310,9 +310,6 @@ def interactive_graph_learning():
                             
                             # Create visualization
                             clear_screen()
-                            print(f"\nGraph: {graph_name}")
-                            print(f"Algorithm: {algo_name}")
-                            input("\nPress Enter to start visualization...")
                             
                             graph = graph_func()
                             visualizer = GraphVisualizer(graph)
@@ -325,7 +322,6 @@ def interactive_graph_learning():
                                 print("\nGoodbye!")
                                 return
                             
-                            input("\nPress Enter to continue...")
                         except Exception as e:
                             print(f"\nError: {e}")
                             input("\nPress Enter to continue...")
