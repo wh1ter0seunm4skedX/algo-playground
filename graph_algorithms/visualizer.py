@@ -40,13 +40,15 @@ class GraphVisualizer:
         ax_info = plt.subplot2grid((1, 5), (0, 4))
         
         # Add buttons with better positioning, including next and exit buttons
-        ax_back = plt.axes([0.5, 0.05, 0.08, 0.04])
+        ax_back = plt.axes([0.4, 0.05, 0.08, 0.04])
+        ax_start = plt.axes([0.5, 0.05, 0.08, 0.04])
         ax_pause = plt.axes([0.6, 0.05, 0.08, 0.04])
         ax_forward = plt.axes([0.7, 0.05, 0.08, 0.04])
         ax_next = plt.axes([0.8, 0.05, 0.08, 0.04])
         ax_exit = plt.axes([0.9, 0.05, 0.08, 0.04])
         
         btn_back = Button(ax_back, '<')
+        btn_start = Button(ax_start, '|<<')
         btn_pause = Button(ax_pause, '||')
         btn_forward = Button(ax_forward, '>')
         btn_next = Button(ax_next, '>>')
@@ -89,7 +91,7 @@ class GraphVisualizer:
                 elif node in visited:
                     node_colors.append('green')
                 elif node in queue:
-                    node_colors.append('yellow')
+                    node_colors.append('#FFD700')  # Darker yellow (gold)
                 else:
                     node_colors.append('lightblue')
             
@@ -97,21 +99,30 @@ class GraphVisualizer:
                                  node_color=node_colors, 
                                  ax=ax_graph)
             nx.draw_networkx_labels(self.G, self.pos, ax=ax_graph)
-            
+ 
             # Update information panel
             ax_info.text(0.1, 0.95, f"Step: {self.step_count}", fontsize=10)
             ax_info.text(0.1, 0.85, f"Current: {current_vertex}", fontsize=10)
             ax_info.text(0.1, 0.75, f"Visited: {visited}", fontsize=10)
-            ax_info.text(0.1, 0.65, f"Queue/Stack:", fontsize=10)
             ax_info.text(0.1, 0.55, f"{queue}", fontsize=10)
             
-            if isinstance(queue, list):
-                structure_type = "Queue" if queue and queue[0] == next(iter(queue)) else "Stack"
-                ax_info.text(0.1, 0.35, 
-                    f"Using: {structure_type}\n" +
-                    f"BFS uses Queue (FIFO)\n" +
-                    f"DFS uses Stack (LIFO)", 
-                    fontsize=10, bbox=dict(facecolor='white', alpha=0.5))
+            # Add color legend
+            legend_text = (
+                "Color Legend:\n"
+                "🔴 Red: Current vertex\n"
+                "🟢 Green: Visited vertices\n"
+                "🟡 Yellow: In queue/stack\n"
+                "🔵 Blue: Unvisited vertices\n"
+                "\nEdges:\n"
+                "─── Green: Traversed\n"
+                "─── Gray: Unexplored"
+            )
+            ax_info.text(0.1, 0.2, legend_text, 
+                        fontsize=9,
+                        bbox=dict(facecolor='white', 
+                                alpha=0.8,
+                                edgecolor='gray',
+                                boxstyle='round'))
             
             ax_info.axis('off')
             ax_graph.set_title(f"{title} - Step {frame_idx}")
@@ -149,11 +160,18 @@ class GraphVisualizer:
             GraphVisualizer.terminate_program = True
             plt.close(fig)
         
+        def on_start(event):
+            self.paused = True
+            btn_pause.label.set_text('>')
+            self.current_frame_idx = 0
+            update_frame(0)
+
         btn_pause.on_clicked(on_pause)
         btn_back.on_clicked(on_back)
         btn_forward.on_clicked(on_forward)
         btn_next.on_clicked(on_next)
         btn_exit.on_clicked(on_exit)
+        btn_start.on_clicked(on_start)
         
         interval = 1000 / self.speed
         self.anim = FuncAnimation(

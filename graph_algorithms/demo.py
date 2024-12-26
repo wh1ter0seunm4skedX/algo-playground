@@ -3,6 +3,9 @@ from traversal import dfs_steps, bfs_steps
 from visualizer import GraphVisualizer
 import sys
 import os
+from colorama import init, Fore, Style
+
+init(autoreset=True)  # Initialize colorama
 
 def create_simple_path():
     """Creates a simple path graph: 1-2-3-4-5"""
@@ -151,6 +154,70 @@ def create_complex_cycle_2():
         g.add_edge(v1, v2)
     return g
 
+def create_large_path():
+    """Creates a large path graph with 25 vertices and multiple branches"""
+    g = Graph()
+    vertices = range(1, 26)
+    edges = [
+        # Main path
+        (1, 2), (2, 3), (3, 4), (4, 5), (5, 6),
+        (6, 7), (7, 8), (8, 9), (9, 10), (10, 11),
+        (11, 12), (12, 13), (13, 14), (14, 15),
+        # Branches
+        (3, 16), (16, 17), (17, 18),  # Branch 1
+        (7, 19), (19, 20), (20, 21),  # Branch 2
+        (11, 22), (22, 23),           # Branch 3
+        (14, 24), (24, 25)            # Branch 4
+    ]
+    for vertex in vertices:
+        g.add_vertex(vertex)
+    for v1, v2 in edges:
+        g.add_edge(v1, v2)
+    return g
+
+def create_large_tree():
+    """Creates a large tree with 25 vertices"""
+    g = Graph()
+    vertices = range(1, 26)
+    edges = [
+        # Level 1
+        (1, 2), (1, 3), (1, 4),
+        # Level 2
+        (2, 5), (2, 6), (3, 7), (3, 8), (4, 9), (4, 10),
+        # Level 3
+        (5, 11), (5, 12), (6, 13), (6, 14), (7, 15), (7, 16),
+        (8, 17), (8, 18), (9, 19), (9, 20), (10, 21), (10, 22),
+        # Level 4
+        (11, 23), (12, 24), (13, 25),
+        # Cross connections
+        (15, 16), (17, 18), (19, 20), (21, 22)
+    ]
+    for vertex in vertices:
+        g.add_vertex(vertex)
+    for v1, v2 in edges:
+        g.add_edge(v1, v2)
+    return g
+
+def create_large_cycle():
+    """Creates a large cycle with 25 vertices and inner connections"""
+    g = Graph()
+    vertices = range(1, 26)
+    # Create outer cycle
+    cycle_edges = [(i, i+1) for i in range(1, 25)] + [(25, 1)]
+    # Create inner connections (every 5th vertex)
+    inner_edges = [
+        (1, 6), (6, 11), (11, 16), (16, 21),
+        (2, 7), (7, 12), (12, 17), (17, 22),
+        (3, 8), (8, 13), (13, 18), (18, 23),
+        (4, 9), (9, 14), (14, 19), (19, 24),
+        (5, 10), (10, 15), (15, 20), (20, 25)
+    ]
+    for vertex in vertices:
+        g.add_vertex(vertex)
+    for v1, v2 in cycle_edges + inner_edges:
+        g.add_edge(v1, v2)
+    return g
+
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -158,8 +225,17 @@ def print_menu(title, options):
     clear_screen()
     print(f"\n=== {title} ===")
     print("Select an option:")
-    for idx, (option, _) in enumerate(options, 1):
-        print(f"{idx}. {option}")
+    for idx, option in enumerate(options, 1):
+        name = option[0]
+        desc = option[2] if len(option) > 2 else ""
+        print(f"{idx}. {name}")
+        if desc:
+            if "Path" in name:
+                print(f"   {Fore.CYAN}{desc}{Style.RESET_ALL}")
+            elif "Tree" in name:
+                print(f"   {Fore.GREEN}{desc}{Style.RESET_ALL}")
+            elif "Cycle" in name:
+                print(f"   {Fore.MAGENTA}{desc}{Style.RESET_ALL}")
     print("0. Exit")
 
 def get_valid_input(max_value):
@@ -174,22 +250,25 @@ def get_valid_input(max_value):
 
 def interactive_graph_learning():
     algorithms = [
-        ("Depth-First Search (DFS)", dfs_steps),
-        ("Breadth-First Search (BFS)", bfs_steps)
+        ("Depth-First Search (DFS)", dfs_steps, "Explores deeply before backtracking"),
+        ("Breadth-First Search (BFS)", bfs_steps, "Explores nearest neighbors first")
     ]
     
     graph_types = [
         ("Path", [
-            ("Complex Path 1", create_complex_path_1),
-            ("Complex Path 2", create_complex_path_2)
+            ("Complex Path 1", create_complex_path_1, "Linear path with side branches"),
+            ("Complex Path 2", create_complex_path_2, "Another path variant with branches"),
+            ("Large Path", create_large_path, "Extended path with multiple branches")
         ]),
         ("Tree", [
-            ("Complex Tree 1", create_complex_tree_1),
-            ("Complex Tree 2", create_complex_tree_2)
+            ("Complex Tree 1", create_complex_tree_1, "Binary tree with horizontal connections"),
+            ("Complex Tree 2", create_complex_tree_2, "Binary tree with diagonal connections"),
+            ("Large Tree", create_large_tree, "Multi-level tree with cross connections")
         ]),
         ("Cycle", [
-            ("Complex Cycle 1", create_complex_cycle_1),
-            ("Complex Cycle 2", create_complex_cycle_2)
+            ("Complex Cycle 1", create_complex_cycle_1, "Cycle with cross-edges"),
+            ("Complex Cycle 2", create_complex_cycle_2, "Cycle with different inner connections"),
+            ("Large Cycle", create_large_cycle, "Large cycle with systematic inner connections")
         ])
     ]
 
@@ -203,7 +282,8 @@ def interactive_graph_learning():
                 print("\nGoodbye!")
                 return
             
-            algo_name, algo_func = algorithms[algo_choice - 1]
+            selected_algo = algorithms[algo_choice - 1]
+            algo_name, algo_func = selected_algo[0], selected_algo[1]
             
             while True:
                 try:
@@ -225,7 +305,8 @@ def interactive_graph_learning():
                             if graph_example_choice == 0:
                                 break  # Go back to graph type selection
                             
-                            graph_name, graph_func = graph_examples[graph_example_choice - 1]
+                            selected_example = graph_examples[graph_example_choice - 1]
+                            graph_name, graph_func = selected_example[0], selected_example[1]  # Only get first two elements
                             
                             # Create visualization
                             clear_screen()
