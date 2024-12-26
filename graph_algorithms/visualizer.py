@@ -34,6 +34,7 @@ class GraphVisualizer:
     
     def visualize_traversal(self, traversal_generator, title="Graph Traversal"):
         fig = plt.figure(figsize=(15, 8))
+        fig.canvas.manager.set_window_title('Graph Algorithm Visualizer - ' + title)  # Add this line
         
         # Create main graph subplot with adjusted size to make room for buttons
         ax_graph = plt.subplot2grid((1, 5), (0, 0), colspan=4)
@@ -91,7 +92,7 @@ class GraphVisualizer:
                 elif node in visited:
                     node_colors.append('green')
                 elif node in queue:
-                    node_colors.append('#FFD700')  # Darker yellow (gold)
+                    node_colors.append('#FFD700') 
                 else:
                     node_colors.append('lightblue')
             
@@ -138,7 +139,7 @@ class GraphVisualizer:
         
         def on_pause(event):
             self.paused = not self.paused
-            btn_pause.label.set_text('>' if self.paused else '||')
+            btn_pause.label.set_text('▶' if self.paused else '||')
             
         def on_back(event):
             self.paused = True
@@ -162,7 +163,7 @@ class GraphVisualizer:
         
         def on_start(event):
             self.paused = True
-            btn_pause.label.set_text('>')
+            btn_pause.label.set_text('▶')
             self.current_frame_idx = 0
             update_frame(0)
 
