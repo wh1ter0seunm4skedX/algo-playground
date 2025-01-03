@@ -10,33 +10,22 @@ from src.visualizer import DFSVisualizer
 from src.problems.all_paths import AllPathsProblem
 
 
-def create_circular_graph():
+def create_demo_graph():
     graph = Graph()
-    n_nodes = 15
-    
-    # Create the outer circle
-    circle_edges = [(i, i+1) for i in range(1, n_nodes)] + [(n_nodes, 1)]
-    graph.add_edges(circle_edges)
-    
-    # Add random cross connections (about 2 extra connections per node)
-    nodes = list(range(1, n_nodes + 1))
-    extra_edges = []
-    for node in nodes:
-        # Add 2 random connections for each node
-        possible_targets = [n for n in nodes if n != node and (node, n) not in circle_edges]
-        num_connections = min(2, len(possible_targets))
-        if possible_targets and num_connections > 0:
-            targets = random.sample(possible_targets, num_connections)
-            extra_edges.extend((node, target) for target in targets)
-    
-    graph.add_edges(extra_edges)
+    # Create a simple graph with 8 nodes for demo
+    edges = [
+        (1, 2), (1, 3), (2, 4), (2, 5),
+        (3, 6), (4, 7), (5, 7), (6, 8),
+        (7, 8), (3, 5)  # Some cross connections
+    ]
+    graph.add_edges(edges)
     return graph
 
 def main():
-    graph = create_circular_graph()
+    graph = create_demo_graph()
     dfs = DFS(graph)
 
-    print("Available nodes: 1-15")
+    print("Available nodes: 1-8")
     start = int(input("Enter the starting node: "))
     end = int(input("Enter the target node: "))
 

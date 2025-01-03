@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-from matplotlib.patches import Patch
+from matplotlib.patches import Patch, Rectangle
 
 class DFSVisualizer:
     def __init__(self, graph, dfs):
@@ -17,14 +17,15 @@ class DFSVisualizer:
             'visited': '#FF8B94',     # Light red
             'path': '#FF4444'         # Bright red for edges
         }
+        self.stack = []
+        self.visited_nodes = set()
         
     def visualize(self, paths):
         self.paths = paths
-        self.pos = nx.spring_layout(self.graph.graph, seed=42)
+        self.pos = nx.spring_layout(self.graph.graph, k=1, iterations=50)
         
-        # Create two subplots - one for graph, one for stats
         self.fig, (self.ax1, self.ax2) = plt.subplots(1, 2, figsize=(15, 8), 
-                                                      gridspec_kw={'width_ratios': [3, 1]})
+                                                      gridspec_kw={'width_ratios': [2, 1]})
         plt.gcf().canvas.mpl_connect('key_press_event', self.on_key_press)
         
         self.draw_current_state()
@@ -35,60 +36,71 @@ class DFSVisualizer:
         self.ax2.clear()
         
         # Draw base graph with circular layout
-        pos = nx.circular_layout(self.graph.graph)
-        nx.draw(self.graph.graph, pos, ax=self.ax1, with_labels=True,
+        nx.draw(self.graph.graph, self.pos, ax=self.ax1, with_labels=True,
                 node_size=1500, font_size=14, node_color=self.colors['unvisited'],
-                edge_color='gray', width=1, font_weight='bold')
+                edge_color='lightgray', width=1, font_weight='bold')
         
         if self.current_path_index < len(self.paths):
             current_path = self.paths[self.current_path_index]
+            
+            # Update visited nodes and stack for visualization
+            self.visited_nodes = set(current_path[:self.current_step_index + 1])
+            self.stack = current_path[:self.current_step_index + 1]
+            
             # Draw visited path
             for i in range(min(self.current_step_index, len(current_path) - 1)):
                 edge = (current_path[i], current_path[i + 1])
-                nx.draw_networkx_edges(self.graph.graph, pos, ax=self.ax1,
+                nx.draw_networkx_edges(self.graph.graph, self.pos, ax=self.ax1,
                                      edgelist=[edge], edge_color=self.colors['path'], 
                                      width=3)
-                nx.draw_networkx_nodes(self.graph.graph, pos, ax=self.ax1,
-                                     nodelist=[current_path[i]], 
+            
+            # Draw visited nodes
+            if self.visited_nodes:
+                nx.draw_networkx_nodes(self.graph.graph, self.pos, ax=self.ax1,
+                                     nodelist=list(self.visited_nodes),
                                      node_color=self.colors['visited'])
             
+            # Draw current node
             if self.current_step_index < len(current_path):
-                nx.draw_networkx_nodes(self.graph.graph, pos, ax=self.ax1,
+                nx.draw_networkx_nodes(self.graph.graph, self.pos, ax=self.ax1,
                                      nodelist=[current_path[self.current_step_index]],
                                      node_color=self.colors['current'])
         
-        self.draw_stats_panel()
+        self.draw_dfs_state_panel()
         plt.draw()
 
-    def draw_stats_panel(self):
+    def draw_dfs_state_panel(self):
         self.ax2.set_axis_off()
         
         # Title
-        self.ax2.text(0.1, 0.95, 'DFS Path Visualization', 
+        self.ax2.text(0.1, 0.95, 'DFS State Visualization', 
                      fontsize=14, fontweight='bold')
         
-        # Stats
-        stats_text = [
-            f"Total Paths: {len(self.paths)}",
-            f"Current Path: {self.current_path_index + 1}/{len(self.paths)}",
-            f"Current Step: {self.current_step_index + 1}",
-            "\nControls:",
-            "→ Next Step",
-            "← Previous Step",
-            "↑ Next Path",
-            "↓ Previous Path",
-            "Space: Pause/Resume",
-            "R: Reset",
-        ]
-        
+        # Draw DFS internal state
         y_pos = 0.85
-        for text in stats_text:
-            if text.startswith('\n'):
-                y_pos -= 0.06
-                text = text.strip()
-            self.ax2.text(0.1, y_pos, text, fontsize=12)
+        
+        # Stack visualization
+        self.ax2.text(0.1, y_pos, 'Stack:', fontsize=12, fontweight='bold')
+        y_pos -= 0.05
+        for node in reversed(self.stack):
+            self.ax2.add_patch(Rectangle((0.1, y_pos), 0.2, 0.04, 
+                                       facecolor=self.colors['current']))
+            self.ax2.text(0.2, y_pos + 0.02, str(node), ha='center')
             y_pos -= 0.05
-
+        
+        # Visited set visualization
+        y_pos -= 0.1
+        self.ax2.text(0.1, y_pos, 'Visited:', fontsize=12, fontweight='bold')
+        y_pos -= 0.05
+        visited_str = ', '.join(map(str, sorted(self.visited_nodes)))
+        self.ax2.text(0.1, y_pos, f'{{{visited_str}}}', fontsize=12)
+        
+        # Path information
+        y_pos -= 0.1
+        self.ax2.text(0.1, y_pos, 
+                      f'Path {self.current_path_index + 1}/{len(self.paths)}',
+                      fontsize=12)
+        
         # Draw legend at bottom
         self.draw_legend_in_stats_panel()
 
