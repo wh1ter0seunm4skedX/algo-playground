@@ -27,7 +27,7 @@ class DFSVisualizer:
         
     def visualize(self, paths):
         self.paths = paths
-        self.pos = nx.spring_layout(self.graph.graph, k=1, iterations=50)
+        self.pos = nx.spring_layout(self.graph.graph, k=2, iterations=50)
         
         self.fig, (self.ax1, self.ax2) = plt.subplots(1, 2, figsize=(15, 8), 
                                                       gridspec_kw={'width_ratios': [2, 1]})
@@ -85,9 +85,11 @@ class DFSVisualizer:
     def draw_dfs_state_panel(self):
         self.ax2.set_axis_off()
         
-        # Title
-        self.ax2.text(0.1, 0.95, 'DFS State Visualization', 
-                     fontsize=14, fontweight='bold')
+        # Add source and target information
+        source = self.paths[0][0]
+        target = self.paths[0][-1]
+        title_text = f'DFS Visualization\nPath {source} → {target}'
+        self.ax2.text(0.1, 0.95, title_text, fontsize=14, fontweight='bold')
         
         # Draw DFS internal state
         y_pos = 0.85
