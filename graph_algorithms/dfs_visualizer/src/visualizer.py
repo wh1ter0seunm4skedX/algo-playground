@@ -3,7 +3,7 @@ import networkx as nx
 from matplotlib.patches import Patch, Rectangle
 
 class DFSVisualizer:
-    def __init__(self, graph, dfs):
+    def __init__(self, graph, dfs, randomize_callback=None):
         self.graph = graph
         self.dfs = dfs
         self.current_path_index = 0
@@ -24,6 +24,7 @@ class DFSVisualizer:
         }
         self.stack = []
         self.visited_nodes = set()
+        self.randomize_callback = randomize_callback
         
     def visualize(self, paths):
         self.paths = paths
@@ -88,7 +89,7 @@ class DFSVisualizer:
         # Add source and target information
         source = self.paths[0][0]
         target = self.paths[0][-1]
-        title_text = f'DFS Visualization\nPath {source} → {target}'
+        title_text = f'DFS Visualization\nPath {source} → {target}\n(Press N for new random path)'
         self.ax2.text(0.1, 0.95, title_text, fontsize=14, fontweight='bold')
         
         # Draw DFS internal state
@@ -142,6 +143,14 @@ class DFSVisualizer:
                        ncol=1)
 
     def on_key_press(self, event):
+        if event.key == 'n' and self.randomize_callback:
+            # Call the randomize callback and update visualization
+            new_paths = self.randomize_callback()
+            if new_paths:
+                self.paths = new_paths
+                self.reset()
+                self.draw_current_state()
+            return
         if event.key == 'right':
             self.next_step()
         elif event.key == 'left':
