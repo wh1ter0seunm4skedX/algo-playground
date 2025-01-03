@@ -15,7 +15,8 @@ class DFSVisualizer:
             'unvisited': '#A8E6CF',  # Light mint
             'current': '#FFD3B6',     # Light orange
             'visited': '#FF8B94',     # Light red
-            'path': '#FF4444'         # Bright red for edges
+            'path': '#FF4444',        # Bright red for edges
+            'edge': 'lightgray'       # Light gray for non-highlighted edges
         }
         self.stack = []
         self.visited_nodes = set()
@@ -35,10 +36,10 @@ class DFSVisualizer:
         self.ax1.clear()
         self.ax2.clear()
         
-        # Draw base graph with circular layout
+        # Draw base graph with spring layout
         nx.draw(self.graph.graph, self.pos, ax=self.ax1, with_labels=True,
                 node_size=1500, font_size=14, node_color=self.colors['unvisited'],
-                edge_color='lightgray', width=1, font_weight='bold')
+                edge_color=self.colors['edge'], width=1, font_weight='bold')
         
         if self.current_path_index < len(self.paths):
             current_path = self.paths[self.current_path_index]
