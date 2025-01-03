@@ -12,11 +12,15 @@ class DFSVisualizer:
         self.pos = None
         self.paused = False
         self.colors = {
-            'unvisited': '#A8E6CF',  # Light mint
-            'current': '#FFD3B6',     # Light orange
-            'visited': '#FF8B94',     # Light red
-            'path': '#FF4444',        # Bright red for edges
-            'edge': 'lightgray'       # Light gray for non-highlighted edges
+            'unvisited': '#A8E6CF',    # Light mint
+            'current': '#FFD3B6',       # Light orange
+            'visited': '#FF8B94',       # Light red
+            'path': '#FF4444',          # Bright red for edges
+            'edge': 'lightgray',        # Default edges
+            'tree': '#2ecc71',          # Green for tree edges
+            'back': '#e74c3c',          # Red for back edges
+            'forward': '#3498db',       # Blue for forward edges
+            'cross': '#9b59b6'          # Purple for cross edges
         }
         self.stack = []
         self.visited_nodes = set()
@@ -40,6 +44,14 @@ class DFSVisualizer:
         nx.draw(self.graph.graph, self.pos, ax=self.ax1, with_labels=True,
                 node_size=1500, font_size=14, node_color=self.colors['unvisited'],
                 edge_color=self.colors['edge'], width=1, font_weight='bold')
+        
+        # Draw edges by type
+        for edge_type in ['tree', 'back', 'forward', 'cross']:
+            edges = [edge for edge, type_ in self.dfs.edge_types.items() if type_ == edge_type]
+            if edges:
+                nx.draw_networkx_edges(self.graph.graph, self.pos, ax=self.ax1,
+                                     edgelist=edges, edge_color=self.colors[edge_type],
+                                     width=2, style='solid' if edge_type == 'tree' else 'dashed')
         
         if self.current_path_index < len(self.paths):
             current_path = self.paths[self.current_path_index]
@@ -110,7 +122,11 @@ class DFSVisualizer:
             Patch(facecolor=self.colors['unvisited'], label='Unvisited Node'),
             Patch(facecolor=self.colors['current'], label='Current Node'),
             Patch(facecolor=self.colors['visited'], label='Visited Node'),
-            Patch(facecolor=self.colors['path'], label='Path Edge')
+            # Edge type patches
+            Patch(facecolor=self.colors['tree'], label='Tree Edge'),
+            Patch(facecolor=self.colors['back'], label='Back Edge'),
+            Patch(facecolor=self.colors['forward'], label='Forward Edge'),
+            Patch(facecolor=self.colors['cross'], label='Cross Edge')
         ]
         
         # Position legend at the bottom of stats panel
@@ -120,7 +136,8 @@ class DFSVisualizer:
                        title='Legend',
                        frameon=True,
                        fancybox=True,
-                       shadow=True)
+                       shadow=True,
+                       ncol=1)
 
     def on_key_press(self, event):
         if event.key == 'right':
