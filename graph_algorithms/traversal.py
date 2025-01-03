@@ -33,13 +33,14 @@ def bfs_steps(graph, start):
         current = queue.pop(0)
         yield current, visited.copy(), queue.copy()
         
+        # Sort neighbors to process smaller vertices first
+        neighbors = sorted(graph.get_neighbors(current))
         neighbors_added = False
-        for neighbor in graph.get_neighbors(current):
+        
+        for neighbor in neighbors:
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
                 neighbors_added = True
-        
-        # Only yield queue updates if there were unvisited neighbors
-        if neighbors_added:
-            yield current, visited.copy(), queue.copy()
+                # Show intermediate state after each neighbor addition
+                yield current, visited.copy(), queue.copy()

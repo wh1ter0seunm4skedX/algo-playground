@@ -61,6 +61,10 @@ class GraphVisualizer:
         self.frames = list(traversal_generator)
         self.current_frame_idx = 0
         self.step_count = 0
+        self.paused = False  # Start playing immediately
+        
+        # Initialize as paused
+        self.paused = True
         
         def update_frame(frame_idx):
             if frame_idx >= len(self.frames) or frame_idx < 0:
@@ -107,23 +111,29 @@ class GraphVisualizer:
             ax_info.text(0.1, 0.75, f"Visited: {visited}", fontsize=10)
             ax_info.text(0.1, 0.55, f"{queue}", fontsize=10)
             
-            # Add color legend
+            # Determine if this is BFS or DFS based on the title
+            structure_name = "Queue" if "BFS" in title else "Stack"
+            
             legend_text = (
                 "Color Legend:\n"
                 "🔴 Red: Current vertex\n"
                 "🟢 Green: Visited vertices\n"
-                "🟡 Yellow: In queue/stack\n"
+                f"🟡 Yellow: In {structure_name}\n"
                 "🔵 Blue: Unvisited vertices\n"
                 "\nEdges:\n"
                 "─── Green: Traversed\n"
                 "─── Gray: Unexplored"
             )
+            
             ax_info.text(0.1, 0.2, legend_text, 
                         fontsize=9,
                         bbox=dict(facecolor='white', 
                                 alpha=0.8,
                                 edgecolor='gray',
                                 boxstyle='round'))
+            
+            # Update structure label
+            ax_info.text(0.1, 0.65, f"{structure_name}:", fontsize=10)
             
             ax_info.axis('off')
             ax_graph.set_title(f"{title} - Step {frame_idx}")
@@ -136,6 +146,19 @@ class GraphVisualizer:
                 if self.current_frame_idx < len(self.frames):
                     update_frame(self.current_frame_idx)
                     self.current_frame_idx += 1
+                elif self.current_frame_idx == len(self.frames):
+                    # Show completion dialog
+                    self.paused = True
+                    btn_pause.label.set_text('▶')
+                    plt.annotate('Traversal Complete!', 
+                                xy=(0.5, 0.5), 
+                                xycoords='figure fraction',
+                                bbox=dict(boxstyle='round,pad=0.5', 
+                                        fc='lightgreen', 
+                                        alpha=0.7),
+                                fontsize=12,
+                                ha='center')
+                    self.current_frame_idx += 1  # Prevent multiple dialogs
         
         def on_pause(event):
             self.paused = not self.paused
@@ -183,6 +206,9 @@ class GraphVisualizer:
             repeat=False,
             cache_frame_data=False  # Prevent caching warning
         )
+        
+        # Start with play button
+        btn_pause.label.set_text('||')
         
         plt.show()
         
