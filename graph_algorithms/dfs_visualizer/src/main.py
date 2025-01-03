@@ -58,8 +58,8 @@ def main():
     problem = AllPathsProblem(dfs)
     paths = problem.find_all_paths(start, end)
 
-    # Initialize the visualizer
-    visualizer = EnhancedDFSVisualizer(graph, dfs)
+    # Initialize the visualizer (remove EnhancedDFSVisualizer)
+    visualizer = DFSVisualizer(graph, dfs)
     visualizer.visualize(paths)
 
 
