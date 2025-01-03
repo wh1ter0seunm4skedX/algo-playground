@@ -27,7 +27,19 @@ class PathVisualizer:
         self.dfs = None
         self.visualizer = None
     
+    def generate_new_graph(self):
+        """Generate completely new graph and find a random path"""
+        self.graph = Graph()
+        edges = self.graph.generate_random_graph(n_nodes=8, min_edges=10, max_edges=12)
+        self.dfs = DFS(self.graph)  # Reset DFS with new graph
+        return self.generate_new_path()  # Find paths in new graph
+        
     def generate_new_path(self):
+        """Generate new path in existing graph"""
+        if not self.graph:
+            return self.generate_new_graph()
+            
+        self.dfs.edge_types = {}  # Reset edge classifications
         # Create new random graph
         self.graph = Graph()
         edges = self.graph.generate_random_graph(n_nodes=8, min_edges=10, max_edges=12)
@@ -54,15 +66,17 @@ class PathVisualizer:
 
     def run(self):
         # Initial setup
-        self.graph = Graph()
-        self.dfs = DFS(self.graph)
+        self.graph = None
+        self.dfs = None
+        paths = self.generate_new_graph()
         
-        # Generate first random path
-        paths = self.generate_new_path()
-        
-        # Create visualizer with randomize callback
-        self.visualizer = DFSVisualizer(self.graph, self.dfs, 
-                                      randomize_callback=self.generate_new_path)
+        # Create visualizer with both callbacks
+        self.visualizer = DFSVisualizer(
+            self.graph, 
+            self.dfs,
+            randomize_callback=self.generate_new_path,
+            new_graph_callback=self.generate_new_graph
+        )
         self.visualizer.visualize(paths)
 
 def main():
