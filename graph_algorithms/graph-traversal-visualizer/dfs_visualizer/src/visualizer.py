@@ -49,12 +49,21 @@ class DFSVisualizer:
         
         # Draw edges by type
         for edge_type in ['tree', 'back', 'forward', 'cross']:
-            edges = [edge for edge, type_ in self.dfs.edge_types.items() if type_ == edge_type]
+            # Only show edges discovered up to current step
+            current_path = self.paths[self.current_path_index] if self.current_path_index < len(self.paths) else []
+            visited_nodes = set(current_path[:self.current_step_index + 1])
+            
+            # Filter edges that have been discovered (where source node has been visited)
+            edges = [
+                edge for edge, type_ in self.dfs.edge_types.items() 
+                if type_ == edge_type and edge[0] in visited_nodes
+            ]
+            
             if edges:
                 nx.draw_networkx_edges(self.graph.graph, self.pos, ax=self.ax1,
                                      edgelist=edges, edge_color=self.colors[edge_type],
                                      width=2, style='solid' if edge_type == 'tree' else 'dashed')
-        
+
         if self.current_path_index < len(self.paths):
             current_path = self.paths[self.current_path_index]
             
@@ -83,6 +92,8 @@ class DFSVisualizer:
         
         self.draw_dfs_state_panel()
         plt.draw()
+
+        
 
     def draw_dfs_state_panel(self):
         self.ax2.set_axis_off()
