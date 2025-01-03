@@ -47,14 +47,6 @@ class DFSVisualizer:
                 node_size=1500, font_size=14, node_color=self.colors['unvisited'],
                 edge_color=self.colors['edge'], width=1, font_weight='bold')
         
-        # Draw edges by type
-        for edge_type in ['tree', 'back', 'forward', 'cross']:
-            edges = [edge for edge, type_ in self.dfs.edge_types.items() if type_ == edge_type]
-            if edges:
-                nx.draw_networkx_edges(self.graph.graph, self.pos, ax=self.ax1,
-                                     edgelist=edges, edge_color=self.colors[edge_type],
-                                     width=2, style='solid' if edge_type == 'tree' else 'dashed')
-        
         if self.current_path_index < len(self.paths):
             current_path = self.paths[self.current_path_index]
             
