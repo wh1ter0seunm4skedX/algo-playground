@@ -1,66 +1,67 @@
+import pygame
+import matplotlib.pyplot as plt
+import networkx as nx
+import time
+
 from src.graph import Graph
 from src.dfs import DFS
 from src.visualizer import DFSVisualizer
 from src.problems.all_paths import AllPathsProblem
-from src.problems.cycle_detection import CycleDetectionProblem
-from src.problems.topological_sort import TopologicalSortProblem
-from src.problems.connected_components import ConnectedComponentsProblem
 
-def show_menu():
-    print("Select a problem to solve using DFS:")
-    print("1. Find all paths between two nodes in a graph")
-    print("2. Detect cycles in a directed graph")
-    print("3. Perform topological sorting")
-    print("4. Find connected components in an undirected graph")
-    print("5. Exit")
 
-def solve_all_paths(graph, dfs):
-    start = int(input("Enter the starting node: "))
-    end = int(input("Enter the target node: "))
-    problem = AllPathsProblem(dfs)
-    paths = problem.find_all_paths(start, end)
-    print(f"All paths from {start} to {end}: {paths}")
-    visualizer = DFSVisualizer(graph, dfs)
-    visualizer.visualize(paths)
+class EnhancedDFSVisualizer(DFSVisualizer):
+    def __init__(self, graph, dfs):
+        super().__init__(graph, dfs)
 
-def solve_cycle_detection(graph, dfs):
-    problem = CycleDetectionProblem(dfs)
-    has_cycle = problem.has_cycle()
-    print(f"Graph contains a cycle: {has_cycle}")
+    def visualize(self, paths):
+        pos = nx.spring_layout(self.graph.graph, seed=42)  # Aesthetic layout
 
-def solve_topological_sort(graph, dfs):
-    problem = TopologicalSortProblem(dfs)
-    sorted_nodes = problem.sort()
-    print(f"Topological Sort: {sorted_nodes}")
+        plt.figure(figsize=(8, 6))
+        nx.draw(self.graph.graph, pos, with_labels=True, node_size=2000, font_size=16, node_color='lightblue')
 
-def solve_connected_components(graph, dfs):
-    problem = ConnectedComponentsProblem(dfs)
-    components = problem.find_components()
-    print(f"Connected components: {components}")
+        # Highlight the paths step by step
+        for path in paths:
+            self.animate_path(path, pos)
+
+        plt.show()
+
+    def animate_path(self, path, pos):
+        for i in range(len(path) - 1):
+            edge_list = [(path[i], path[i + 1])]
+            self.draw_single_step(pos, edge_list)
+            time.sleep(0.5)  # Pause for animation effect
+
+    def draw_single_step(self, pos, edge_list):
+        plt.clf()  # Clear the previous drawing
+
+        # Draw all nodes and edges first
+        nx.draw(self.graph.graph, pos, with_labels=True, node_size=2000, font_size=16, node_color='lightblue')
+
+        # Highlight the current edge and node in the path
+        nx.draw_networkx_edges(self.graph.graph, pos, edgelist=edge_list, edge_color='red', width=3)
+        nx.draw_networkx_nodes(self.graph.graph, pos, nodelist=[edge_list[0][0], edge_list[0][1]], node_color='orange')
+
+        plt.draw()
+        plt.pause(0.1)  # Display the update
+
 
 def main():
     graph = Graph()
-    graph.add_edges([(1, 2), (1, 3), (2, 4), (3, 4), (4, 5)])
+    graph.add_edges([(1, 2), (1, 3), (2, 4), (3, 4), (4, 5), (2, 5)])
 
     dfs = DFS(graph)
 
-    while True:
-        show_menu()
-        choice = input("Enter your choice: ")
+    # Input the start and end nodes
+    start = int(input("Enter the starting node: "))
+    end = int(input("Enter the target node: "))
 
-        if choice == "1":
-            solve_all_paths(graph, dfs)
-        elif choice == "2":
-            solve_cycle_detection(graph, dfs)
-        elif choice == "3":
-            solve_topological_sort(graph, dfs)
-        elif choice == "4":
-            solve_connected_components(graph, dfs)
-        elif choice == "5":
-            print("Exiting...")
-            break
-        else:
-            print("Invalid choice, please try again.")
+    problem = AllPathsProblem(dfs)
+    paths = problem.find_all_paths(start, end)
+
+    # Initialize the visualizer
+    visualizer = EnhancedDFSVisualizer(graph, dfs)
+    visualizer.visualize(paths)
+
 
 if __name__ == "__main__":
     main()
