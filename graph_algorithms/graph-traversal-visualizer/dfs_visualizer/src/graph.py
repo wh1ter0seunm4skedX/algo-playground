@@ -40,3 +40,13 @@ class Graph:
 
     def get_nodes(self):
         return list(self.graph.nodes)
+
+    def has_edge(self, source, target):
+        return self.graph.has_edge(source, target)
+
+    def has_path(self, source, target):
+        try:
+            path = nx.shortest_path(self.graph, source, target)
+            return True
+        except nx.NetworkXNoPath:
+            return False

@@ -4,9 +4,9 @@ class DFS:
         self.visited = set()
         self.paths = []
         self.current_path = []
-        self.edge_types = {}  # Store edge classifications
-        self.discovery_time = {}  # Track node discovery times
-        self.finish_time = {}    # Track node finish times
+        self.edge_types = {}  
+        self.discovery_time = {}  
+        self.finish_time = {}    
         self.time = 0
 
     def dfs(self, node, target):
@@ -20,6 +20,10 @@ class DFS:
         else:
             for neighbor in self.graph.get_neighbors(node):
                 edge = (node, neighbor)
+                # Only process if it's a valid edge in the directed graph
+                if not self.graph.has_edge(node, neighbor):
+                    continue
+                    
                 if neighbor not in self.visited:
                     self.edge_types[edge] = 'tree'
                     self.dfs(neighbor, target)

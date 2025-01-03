@@ -32,36 +32,53 @@ class PathVisualizer:
         self.graph = Graph()
         edges = self.graph.generate_random_graph(n_nodes=8, min_edges=10, max_edges=12)
         self.dfs = DFS(self.graph)  # Reset DFS with new graph
-        return self.generate_new_path()  # Find paths in new graph
+        
+        # Update visualizer first if it exists
+        if self.visualizer:
+            self.visualizer.update_graph_and_dfs(self.graph, self.dfs)
+            
+        # Then generate new paths
+        return self.generate_new_path()
         
     def generate_new_path(self):
         """Generate new path in existing graph"""
         if not self.graph:
             return self.generate_new_graph()
             
-        self.dfs.edge_types = {}  # Reset edge classifications
-        # Create new random graph
-        self.graph = Graph()
-        edges = self.graph.generate_random_graph(n_nodes=8, min_edges=10, max_edges=12)
+        # Only create new graph if this is called directly (not from generate_new_graph)
+        if self.visualizer and self.visualizer.paths:  # Check if we're not in initial setup
+            self.dfs.edge_types = {}
+            self.graph = Graph()
+            edges = self.graph.generate_random_graph(n_nodes=8, min_edges=10, max_edges=12)
+            self.dfs = DFS(self.graph)
+            self.visualizer.update_graph_and_dfs(self.graph, self.dfs)
         
-        # Initialize DFS
-        self.dfs = DFS(self.graph)
-        
-        # Select random start and end nodes
+        # Select random start and end nodes that have a valid path between them
         nodes = list(range(1, 9))
-        start = random.choice(nodes)
-        nodes.remove(start)
-        end = random.choice(nodes)
+        valid_path = False
+        max_attempts = 20
+        attempts = 0
+        
+        while not valid_path and attempts < max_attempts:
+            start = random.choice(nodes)
+            remaining = [n for n in nodes if n != start]
+            end = random.choice(remaining)
+            
+            if self.graph.has_path(start, end):
+                valid_path = True
+            attempts += 1
+            
+        if not valid_path:
+            return self.generate_new_graph()
         
         print(f"Finding new paths from node {start} to node {end}")
-        
         problem = AllPathsProblem(self.dfs)
         paths = problem.find_all_paths(start, end)
         
         if not paths:
             return self.generate_new_path()
             
-        print(f"Found {len(paths)} paths")
+        print(f"Found {len(paths)} valid paths")
         return paths
 
     def run(self):
