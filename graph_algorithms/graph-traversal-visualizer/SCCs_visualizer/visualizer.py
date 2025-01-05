@@ -1,60 +1,70 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+from matplotlib.widgets import Button
+from matplotlib.patches import Patch
 
 class GraphVisualizer:
     def __init__(self, graph):
         self.graph = graph
-        self.figure, self.ax = plt.subplots(figsize=(8, 6))
         self.g = nx.DiGraph()
+        self.positions = None
+        self.steps = []  # Store steps for navigation
+        self.current_step = 0
+
         self._initialize_graph()
-    
+
     def _initialize_graph(self):
-        # Add edges to the NetworkX graph
         for u, neighbors in self.graph.get_adj_list().items():
             for v in neighbors:
                 self.g.add_edge(u, v)
-        
-    def draw_graph(self, title="Graph", highlighted_nodes=None):
-        self.ax.clear()
-        
-        # Highlight specific nodes if needed
-        node_colors = ["red" if highlighted_nodes and node in highlighted_nodes else "skyblue" for node in self.g.nodes()]
-        
+        self.positions = nx.spring_layout(self.g)  # Fixed layout
+
+    def add_step(self, title, highlighted_nodes=None, explanation=""):
+        self.steps.append((title, highlighted_nodes, explanation))
+
+    def display_step(self):
+        if not self.steps:
+            print("No steps available to display.")
+            return
+
+        title, highlighted_nodes, explanation = self.steps[self.current_step]
+        self._draw_graph(title, highlighted_nodes, explanation)
+
+    def _draw_graph(self, title, highlighted_nodes, explanation):
+        plt.clf()
+        node_colors = [
+            "red" if highlighted_nodes and node in highlighted_nodes else "skyblue"
+            for node in self.g.nodes()
+        ]
+
         # Draw the graph
         nx.draw(
             self.g,
-            ax=self.ax,
+            pos=self.positions,
             with_labels=True,
             node_color=node_colors,
             edge_color="black",
             node_size=1000,
-            font_size=15
+            font_size=15,
         )
-        self.ax.set_title(title, fontsize=16)
-        plt.pause(0.5)  # Pause to allow for real-time updates
-    
-    def draw_sccs(self, sccs, title="Strongly Connected Components"):
-        self.ax.clear()
-        
-        # Assign colors to SCCs
-        color_map = {}
-        colors = plt.cm.get_cmap("tab10", len(sccs))
-        
-        for idx, scc in enumerate(sccs):
-            for node in scc:
-                color_map[node] = colors(idx)
-        
-        node_colors = [color_map.get(node, "skyblue") for node in self.g.nodes()]
-        
-        # Draw the graph with SCC coloring
-        nx.draw(
-            self.g,
-            ax=self.ax,
-            with_labels=True,
-            node_color=node_colors,
-            edge_color="black",
-            node_size=1000,
-            font_size=15
+
+        # Add title and explanation
+        plt.title(title, fontsize=16)
+        plt.text(
+            1.05, 0.5, explanation, fontsize=12, transform=plt.gca().transAxes, verticalalignment="center"
         )
-        self.ax.set_title(title, fontsize=16)
-        plt.show(block=True)  # Final display
+
+        # Add legend
+        legend = [
+            Patch(color="skyblue", label="Unvisited Nodes"),
+            Patch(color="red", label="Current/Highlighted Node(s)"),
+        ]
+        plt.legend(handles=legend, loc="upper left", bbox_to_anchor=(1, 1))
+        plt.draw()
+
+    def navigate_steps(self, event):
+        if event.key == "right":
+            self.current_step = min(self.current_step + 1, len(self.steps) - 1)
+        elif event.key == "left":
+            self.current_step = max(self.current_step - 1, 0)
+        self.display_step()

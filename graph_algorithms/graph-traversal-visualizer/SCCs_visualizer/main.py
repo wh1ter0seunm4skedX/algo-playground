@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt  # Import for interactive visualization
 from graph import Graph
 from kosaraju import Kosaraju
 from visualizer import GraphVisualizer
@@ -11,14 +12,28 @@ def main():
 
     # Visualize the original graph
     visualizer = GraphVisualizer(graph)
-    visualizer.draw_graph(title="Original Graph")
+    visualizer.add_step(
+        title="Original Graph",
+        highlighted_nodes=None,
+        explanation="This is the original graph before any processing."
+    )
+    visualizer.display_step()  # Display the initial graph
     
     # Step 2: Run Kosaraju's Algorithm
     kosaraju = Kosaraju(graph, visualizer)
     sccs = kosaraju.find_sccs()
     
     # Step 3: Visualize SCCs
-    visualizer.draw_sccs(sccs, title="Strongly Connected Components")
+    visualizer.add_step(
+        title="Strongly Connected Components",
+        highlighted_nodes=None,
+        explanation="Final output showing all strongly connected components."
+    )
+    visualizer.display_step()
+    
+    print("Press the right and left arrow keys to navigate through the steps.")
+    plt.gcf().canvas.mpl_connect("key_press_event", visualizer.navigate_steps)
+    plt.show()
     
 if __name__ == "__main__":
     main()
