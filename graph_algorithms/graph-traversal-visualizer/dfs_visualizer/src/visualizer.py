@@ -117,11 +117,7 @@ class DFSVisualizer:
             Patch(facecolor=self.colors['unvisited'], label='Unvisited Node'),
             Patch(facecolor=self.colors['current'], label='Current Node'),
             Patch(facecolor=self.colors['visited'], label='Visited Node'),
-            # Edge type patches
-            Patch(facecolor=self.colors['tree'], label='Tree Edge'),
-            Patch(facecolor=self.colors['back'], label='Back Edge'),
-            Patch(facecolor=self.colors['forward'], label='Forward Edge'),
-            Patch(facecolor=self.colors['cross'], label='Cross Edge')
+            Patch(facecolor=self.colors['path'], label='Visited Path'),
         ]
         
         # Position legend at the bottom of stats panel
