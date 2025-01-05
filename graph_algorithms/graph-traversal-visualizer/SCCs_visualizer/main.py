@@ -14,7 +14,7 @@ def main():
     visualizer.draw_graph(title="Original Graph")
     
     # Step 2: Run Kosaraju's Algorithm
-    kosaraju = Kosaraju(graph)
+    kosaraju = Kosaraju(graph, visualizer)
     sccs = kosaraju.find_sccs()
     
     # Step 3: Visualize SCCs
