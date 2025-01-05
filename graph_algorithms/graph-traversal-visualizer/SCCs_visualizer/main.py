@@ -20,35 +20,16 @@ def create_example_graph():
     return Graph(num_nodes, edges)
 
 def main():
-    print("Welcome to the SCC Visualizer using Kosaraju's Algorithm!")
     graph = create_example_graph()
-    print(f"Created example graph with {graph.num_nodes} nodes and {len(graph.edges)} edges.")
-
-    # Visualize the original graph
     visualizer = GraphVisualizer(graph)
-    visualizer.add_step(
-        title="Original Graph",
-        highlighted_nodes=None,
-        explanation="This is the original graph before any processing."
-    )
-    visualizer.display_step()  # Display the initial graph
-    
-    # Step 2: Run Kosaraju's Algorithm
-    kosaraju = Kosaraju(graph, visualizer)
-    sccs = kosaraju.find_sccs()
-    
-    # Step 3: Visualize SCCs
-    visualizer.add_step(
-        title="Strongly Connected Components",
-        highlighted_nodes=None,
-        explanation="Final output showing all strongly connected components."
-    )
+    visualizer.add_step(title="Original Graph")
     visualizer.display_step()
     
-    # Connect keyboard navigation
-    print("Press the right and left arrow keys to navigate through the steps.")
-    fig = plt.gcf()  # Get the current figure
-    fig.canvas.mpl_connect("key_press_event", visualizer.navigate_steps)
+    kosaraju = Kosaraju(graph, visualizer)
+    kosaraju.find_sccs()
+    
+    print("Use left/right arrow keys to navigate")
+    plt.gcf().canvas.mpl_connect("key_press_event", visualizer.navigate_steps)
     plt.show()
 
 if __name__ == "__main__":

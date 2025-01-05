@@ -4,62 +4,42 @@ class Kosaraju:
         self.visualizer = visualizer
         self.num_nodes = graph.num_nodes
         self.visited = [False] * self.num_nodes
-        self.time = 0
 
-    def _dfs(self, node, graph, result, explanation):
+    def _dfs(self, node, graph, result):
         self.visited[node] = True
         for neighbor in graph.get_adj_list()[node]:
             if not self.visited[neighbor]:
-                self._dfs(neighbor, graph, result, explanation)
+                self._dfs(neighbor, graph, result)
         result.append(node)
-        self.time += 1
-        self.visualizer.finish_times[node] = self.time
         self.visualizer.stack.append(node)
         self.visualizer.add_step(
-            title=f"DFS visiting {node}",
-            highlighted_nodes=[node],
-            explanation=explanation,
+            title=f"DFS Step",
+            highlighted_nodes=[node]
         )
 
     def _fill_order(self):
-        explanation = (
-            "Performing the first DFS to calculate the finish times of nodes. "
-            "These times will determine the order of traversal in the reversed graph."
-        )
         for node in range(self.num_nodes):
             if not self.visited[node]:
-                self._dfs(node, self.graph, [], explanation)
+                self._dfs(node, self.graph, [])
 
     def find_sccs(self):
-        # Step 1: Fill order
         self._fill_order()
-        self.visualizer.add_step(
-            title="First DFS Completed",
-            explanation="The finish times have been determined. Next, we reverse the graph.",
-        )
-
-        # Step 2: Reverse graph
+        
         reversed_graph = self.graph.reverse()
         self.visualizer.graph = reversed_graph
         self.visualizer._initialize_graph()
-        self.visualizer.add_step(
-            title="Graph Reversed",
-            explanation="All edges in the graph have been reversed.",
-        )
-
-        # Step 3: DFS on reversed graph
+        
         self.visited = [False] * self.num_nodes
         sccs = []
         while self.visualizer.stack:
             node = self.visualizer.stack.pop()
             if not self.visited[node]:
                 scc = []
-                self._dfs(node, reversed_graph, scc, explanation="Identifying SCCs.")
+                self._dfs(node, reversed_graph, scc)
                 sccs.append(scc)
                 self.visualizer.add_step(
-                    title=f"Identified SCC: {scc}",
-                    highlighted_nodes=scc,
-                    explanation="This is one strongly connected component found in the reversed graph.",
+                    title=f"SCC Found",
+                    highlighted_nodes=scc
                 )
 
         return sccs
