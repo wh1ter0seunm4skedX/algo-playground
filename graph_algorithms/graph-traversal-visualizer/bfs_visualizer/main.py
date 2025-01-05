@@ -29,30 +29,39 @@ def bfs_visualizer(graph, start_node):
 
     # Set up visualization
     plt.close('all')  # Close any existing windows
-    fig, ax = plt.subplots(figsize=(8, 6))
-    plt.subplots_adjust(right=0.8)  # Leave space for legend
-
-    # Legend setup
-    legend_ax = fig.add_axes([0.85, 0.3, 0.1, 0.4])  # [x, y, width, height]
-    legend_ax.axis('off')
-    legend_ax.text(0.5, 0.9, "Legend", fontsize=12, weight='bold', ha='center')
-    legend_ax.text(0.5, 0.7, "Visited", color="skyblue", fontsize=10, ha='center')
-    legend_ax.text(0.5, 0.5, "Current", color="green", fontsize=10, ha='center')
-    legend_ax.text(0.5, 0.3, "Unvisited", color="lightgray", fontsize=10, ha='center')
+    fig, (ax_graph, ax_queue) = plt.subplots(1, 2, figsize=(12, 6), gridspec_kw={'width_ratios': [3, 1]})
+    plt.subplots_adjust(wspace=0.3)
 
     # Variables for navigation
     current_index = 0
 
     def draw_graph():
         """Draw the graph with the current traversal state."""
-        ax.clear()
-        nx.draw(G, pos, ax=ax, with_labels=True, node_color="lightgray", edge_color="black", node_size=800, font_size=10, font_weight='bold')
+        ax_graph.clear()
+        nx.draw(G, pos, ax=ax_graph, with_labels=True, node_color="lightgray", edge_color="black", node_size=800, font_size=10, font_weight='bold')
         # Highlight visited nodes
-        nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=traversal_order[:current_index], node_color="skyblue", node_size=800)
+        nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=traversal_order[:current_index], node_color="skyblue", node_size=800)
         # Highlight current node
         if current_index < len(traversal_order):
-            nx.draw_networkx_nodes(G, pos, ax=ax, nodelist=[traversal_order[current_index]], node_color="green", node_size=800)
-        ax.set_title(f"BFS Visualizer - Step {current_index + 1}/{len(traversal_order)}")
+            nx.draw_networkx_nodes(G, pos, ax=ax_graph, nodelist=[traversal_order[current_index]], node_color="green", node_size=800)
+        ax_graph.set_title(f"BFS Visualizer - Step {current_index + 1}/{len(traversal_order)}")
+
+    def draw_queue():
+        """Display the BFS queue and visited nodes."""
+        ax_queue.clear()
+        ax_queue.axis("off")
+        queue_display = queue[current_index:] if current_index < len(queue) else []
+        visited_display = traversal_order[:current_index]
+        
+        # BFS Queue
+        ax_queue.text(0.5, 0.9, "BFS Queue", fontsize=12, weight="bold", ha="center")
+        for i, node in enumerate(queue_display):
+            ax_queue.text(0.5, 0.8 - i * 0.05, node, fontsize=10, ha="center", color="blue")
+
+        # Visited Nodes
+        ax_queue.text(0.5, 0.4, "Visited Nodes", fontsize=12, weight="bold", ha="center")
+        for i, node in enumerate(visited_display):
+            ax_queue.text(0.5, 0.3 - i * 0.05, node, fontsize=10, ha="center", color="green")
 
     def on_key(event):
         """Handle keyboard events for navigation."""
@@ -62,10 +71,12 @@ def bfs_visualizer(graph, start_node):
         elif event.key == 'left' and current_index > 0:
             current_index -= 1
         draw_graph()
+        draw_queue()
         fig.canvas.draw()
 
     # Initial draw
     draw_graph()
+    draw_queue()
     fig.canvas.mpl_connect('key_press_event', on_key)
 
     plt.show()
