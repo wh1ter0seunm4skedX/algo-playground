@@ -1,22 +1,15 @@
 from graph import Graph
 from kosaraju import Kosaraju
 from visualizer import GraphVisualizer
+from random_graph import RandomGraph
 
 def main():
     print("Welcome to the SCC Visualizer using Kosaraju's Algorithm!")
-    
-    # Input: Number of nodes and edges
-    num_nodes = int(input("Enter the number of nodes in the graph: "))
-    num_edges = int(input("Enter the number of edges in the graph: "))
-    
-    print("Enter edges in the format 'source destination':")
-    edges = []
-    for _ in range(num_edges):
-        u, v = map(int, input().split())
-        edges.append((u, v))
-    
-    # Step 1: Create the graph
-    graph = Graph(num_nodes, edges)
+    random_graph = RandomGraph()
+    graph = random_graph.create_random_graph()
+    print(f"Generated graph with {graph.num_nodes} nodes and {len(graph.edges)} edges.")
+
+    # Visualize the original graph
     visualizer = GraphVisualizer(graph)
     visualizer.draw_graph(title="Original Graph")
     
