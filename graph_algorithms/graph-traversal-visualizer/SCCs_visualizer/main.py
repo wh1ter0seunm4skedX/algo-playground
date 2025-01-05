@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt  # Import for interactive visualization
+import matplotlib.pyplot as plt
 from graph import Graph
 from kosaraju import Kosaraju
 from visualizer import GraphVisualizer
@@ -34,6 +34,6 @@ def main():
     print("Press the right and left arrow keys to navigate through the steps.")
     plt.gcf().canvas.mpl_connect("key_press_event", visualizer.navigate_steps)
     plt.show()
-    
+
 if __name__ == "__main__":
     main()

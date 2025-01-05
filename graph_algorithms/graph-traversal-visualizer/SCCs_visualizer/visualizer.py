@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-from matplotlib.widgets import Button
-from matplotlib.patches import Patch
+from matplotlib.patches import Patch, Rectangle
 
 class GraphVisualizer:
     def __init__(self, graph):
@@ -31,13 +30,15 @@ class GraphVisualizer:
         self._draw_graph(title, highlighted_nodes, explanation)
 
     def _draw_graph(self, title, highlighted_nodes, explanation):
+        plt.figure(figsize=(12, 8))  # Larger window size
         plt.clf()
         node_colors = [
             "red" if highlighted_nodes and node in highlighted_nodes else "skyblue"
             for node in self.g.nodes()
         ]
 
-        # Draw the graph
+        # Draw the graph on the left side
+        ax_graph = plt.subplot(1, 2, 1)
         nx.draw(
             self.g,
             pos=self.positions,
@@ -46,20 +47,43 @@ class GraphVisualizer:
             edge_color="black",
             node_size=1000,
             font_size=15,
+            ax=ax_graph
+        )
+        ax_graph.set_title(title, fontsize=16)
+
+        # Add explanation on the right side
+        ax_text = plt.subplot(1, 2, 2)
+        ax_text.axis("off")  # Turn off axis
+        ax_text.set_xlim(0, 1)
+        ax_text.set_ylim(0, 1)
+
+        # Add a rectangle for the explanation box
+        rect = Rectangle((0.05, 0.05), 0.9, 0.9, color="lightgray", alpha=0.3)
+        ax_text.add_patch(rect)
+
+        # Display the explanation inside the box
+        ax_text.text(
+            0.1, 0.8,
+            "Explanation:",
+            fontsize=14,
+            fontweight="bold"
+        )
+        ax_text.text(
+            0.1, 0.7,
+            explanation,
+            fontsize=12,
+            wrap=True,
+            verticalalignment="top",
         )
 
-        # Add title and explanation
-        plt.title(title, fontsize=16)
-        plt.text(
-            1.05, 0.5, explanation, fontsize=12, transform=plt.gca().transAxes, verticalalignment="center"
-        )
-
-        # Add legend
+        # Add legend for graph colors
         legend = [
             Patch(color="skyblue", label="Unvisited Nodes"),
             Patch(color="red", label="Current/Highlighted Node(s)"),
         ]
-        plt.legend(handles=legend, loc="upper left", bbox_to_anchor=(1, 1))
+        ax_graph.legend(handles=legend, loc="lower left", fontsize=10)
+
+        plt.tight_layout()
         plt.draw()
 
     def navigate_steps(self, event):

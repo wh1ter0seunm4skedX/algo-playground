@@ -19,7 +19,10 @@ class Kosaraju:
         )
 
     def _fill_order(self):
-        explanation = "Performing first DFS to determine finish times of nodes."
+        explanation = (
+            "Performing the first DFS to calculate the finish times of nodes. "
+            "These times will determine the order of traversal in the reversed graph."
+        )
         for node in range(self.num_nodes):
             if not self.visited[node]:
                 self._dfs(node, self.graph, self.stack, explanation)
@@ -28,8 +31,8 @@ class Kosaraju:
         # Step 1: Fill order
         self._fill_order()
         self.visualizer.add_step(
-            title="Completed First DFS",
-            explanation="Finish times determined. Moving to reverse the graph.",
+            title="First DFS Completed",
+            explanation="The finish times have been determined. Next, we reverse the graph.",
         )
 
         # Step 2: Reverse graph
@@ -37,8 +40,8 @@ class Kosaraju:
         self.visualizer.graph = reversed_graph
         self.visualizer._initialize_graph()
         self.visualizer.add_step(
-            title="Reversed Graph",
-            explanation="Graph reversed. Performing second DFS.",
+            title="Graph Reversed",
+            explanation="All edges in the graph have been reversed.",
         )
 
         # Step 3: DFS on reversed graph
@@ -48,12 +51,12 @@ class Kosaraju:
             node = self.stack.pop()
             if not self.visited[node]:
                 scc = []
-                self._dfs(node, reversed_graph, scc, explanation="Finding SCC.")
+                self._dfs(node, reversed_graph, scc, explanation="Identifying SCCs.")
                 sccs.append(scc)
                 self.visualizer.add_step(
-                    title=f"Found SCC: {scc}",
+                    title=f"Identified SCC: {scc}",
                     highlighted_nodes=scc,
-                    explanation="Identified an SCC using the reversed graph.",
+                    explanation="This is one strongly connected component found in the reversed graph.",
                 )
 
         return sccs
