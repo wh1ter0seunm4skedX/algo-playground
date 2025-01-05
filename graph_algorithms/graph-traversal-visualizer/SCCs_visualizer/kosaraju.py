@@ -4,7 +4,7 @@ class Kosaraju:
         self.visualizer = visualizer
         self.num_nodes = graph.num_nodes
         self.visited = [False] * self.num_nodes
-        self.stack = []
+        self.time = 0
 
     def _dfs(self, node, graph, result, explanation):
         self.visited[node] = True
@@ -12,6 +12,9 @@ class Kosaraju:
             if not self.visited[neighbor]:
                 self._dfs(neighbor, graph, result, explanation)
         result.append(node)
+        self.time += 1
+        self.visualizer.finish_times[node] = self.time
+        self.visualizer.stack.append(node)
         self.visualizer.add_step(
             title=f"DFS visiting {node}",
             highlighted_nodes=[node],
@@ -25,7 +28,7 @@ class Kosaraju:
         )
         for node in range(self.num_nodes):
             if not self.visited[node]:
-                self._dfs(node, self.graph, self.stack, explanation)
+                self._dfs(node, self.graph, [], explanation)
 
     def find_sccs(self):
         # Step 1: Fill order
@@ -47,8 +50,8 @@ class Kosaraju:
         # Step 3: DFS on reversed graph
         self.visited = [False] * self.num_nodes
         sccs = []
-        while self.stack:
-            node = self.stack.pop()
+        while self.visualizer.stack:
+            node = self.visualizer.stack.pop()
             if not self.visited[node]:
                 scc = []
                 self._dfs(node, reversed_graph, scc, explanation="Identifying SCCs.")

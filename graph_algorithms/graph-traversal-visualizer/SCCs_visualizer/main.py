@@ -2,13 +2,27 @@ import matplotlib.pyplot as plt
 from graph import Graph
 from kosaraju import Kosaraju
 from visualizer import GraphVisualizer
-from random_graph import RandomGraph
+
+def create_example_graph():
+    # Define the number of nodes
+    num_nodes = 8
+
+    # Define the edges as per the provided diagram
+    edges = [
+        (0, 1), (0, 2),
+        (1, 3),
+        (3, 1), (3, 5),
+        (5, 6), (6, 5),
+        (5, 7),
+        (6, 4),
+        (4, 6),
+    ]
+    return Graph(num_nodes, edges)
 
 def main():
     print("Welcome to the SCC Visualizer using Kosaraju's Algorithm!")
-    random_graph = RandomGraph()
-    graph = random_graph.create_random_graph()
-    print(f"Generated graph with {graph.num_nodes} nodes and {len(graph.edges)} edges.")
+    graph = create_example_graph()
+    print(f"Created example graph with {graph.num_nodes} nodes and {len(graph.edges)} edges.")
 
     # Visualize the original graph
     visualizer = GraphVisualizer(graph)
@@ -31,8 +45,10 @@ def main():
     )
     visualizer.display_step()
     
+    # Connect keyboard navigation
     print("Press the right and left arrow keys to navigate through the steps.")
-    plt.gcf().canvas.mpl_connect("key_press_event", visualizer.navigate_steps)
+    fig = plt.gcf()  # Get the current figure
+    fig.canvas.mpl_connect("key_press_event", visualizer.navigate_steps)
     plt.show()
 
 if __name__ == "__main__":

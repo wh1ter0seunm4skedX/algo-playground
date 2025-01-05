@@ -47,6 +47,14 @@ class DFSVisualizer:
                 node_size=1500, font_size=14, node_color=self.colors['unvisited'],
                 edge_color=self.colors['edge'], width=1, font_weight='bold')
         
+        # Draw edges by type
+        for edge_type in ['tree', 'back', 'forward', 'cross']:
+            edges = [edge for edge, type_ in self.dfs.edge_types.items() if type_ == edge_type]
+            if edges:
+                nx.draw_networkx_edges(self.graph.graph, self.pos, ax=self.ax1,
+                                     edgelist=edges, edge_color=self.colors[edge_type],
+                                     width=2, style='solid' if edge_type == 'tree' else 'dashed')
+        
         if self.current_path_index < len(self.paths):
             current_path = self.paths[self.current_path_index]
             
@@ -117,7 +125,11 @@ class DFSVisualizer:
             Patch(facecolor=self.colors['unvisited'], label='Unvisited Node'),
             Patch(facecolor=self.colors['current'], label='Current Node'),
             Patch(facecolor=self.colors['visited'], label='Visited Node'),
-            Patch(facecolor=self.colors['path'], label='Visited Path'),
+            # Edge type patches
+            Patch(facecolor=self.colors['tree'], label='Tree Edge'),
+            Patch(facecolor=self.colors['back'], label='Back Edge'),
+            Patch(facecolor=self.colors['forward'], label='Forward Edge'),
+            Patch(facecolor=self.colors['cross'], label='Cross Edge')
         ]
         
         # Position legend at the bottom of stats panel
