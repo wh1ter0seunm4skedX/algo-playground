@@ -1,5 +1,5 @@
 pseudocode_lines = [
-    "Algorithm 1: Shortest Path using Dijkstra Algorithm",
+    "Shortest Path using Dijkstra Algorithm",
     "1. function dijkstra(G, S)",
     "2. for each vertex V in G:",
     "    dist[V] <- infinite",

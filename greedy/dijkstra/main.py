@@ -1,4 +1,3 @@
-import random
 from dijkstra import dijkstra
 from graphs import choose_graph
 from graph_visualization import visualize_graph, handle_key
@@ -6,8 +5,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     graph_data = choose_graph()
-    start_node = random.choice(list(graph_data.keys()))
-    print(f"Randomly chosen start node: {start_node}")
+    start_node = 'A'
     iteration_data = dijkstra(graph_data, start_node)
 
     # Create subplots
