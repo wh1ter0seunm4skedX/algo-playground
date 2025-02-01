@@ -14,7 +14,7 @@ if __name__ == "__main__":
     distances, predecessor, iteration, current_node = iteration_data[0]
     visualize_graph(graph_data, distances, predecessor, iteration, current_node, ax1, ax2)
 
-    current_index = [0]  # Mutable list to keep track of the current iteration index
+    current_index = [0]  # Mutable list to track the current iteration
 
     plt.gcf().canvas.mpl_connect('key_press_event', lambda event: handle_key(event, iteration_data, graph_data, current_index, ax1, ax2))
     plt.show()
