@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from pseudocode import pseudocode_lines
 from heap_visualization import visualize_min_heap
+from decision_visualization import visualize_decisions
 
-def visualize_graph(graph, distances, predecessor, heap_state, iteration, current_node, ax1, ax2, ax3):
-    ax1.clear()  # Clear the graph plot
-    ax2.clear()  # Clear the pseudocode plot
+def visualize_graph(graph, distances, predecessor, heap_state, iteration, current_node, decisions, ax1, ax2, ax3, ax4):
+    ax1.clear()  # Clear previous graph
+    ax2.clear()  # Clear pseudocode
+    ax3.clear()  # Clear decisions
 
     # Create graph
     G = nx.Graph()
@@ -37,35 +39,34 @@ def visualize_graph(graph, distances, predecessor, heap_state, iteration, curren
     ax1.legend(handles=legend_elements, loc='upper left')
     ax1.set_title(f"Iteration {iteration}: Visiting '{current_node}'")
 
-    # Highlight the current step in the pseudocode
+    # Highlight pseudocode step
     highlight_line = determine_highlight_line(iteration)
-    y = 1.0  # Y-position for text
+    y = 1.0
     for i, line in enumerate(pseudocode_lines):
         color = 'red' if i == highlight_line else 'black'
         ax2.text(0.05, y, line, fontsize=10, family='monospace', color=color, verticalalignment='top')
         y -= 0.07
-    ax2.axis('off')  # Turn off axis for pseudocode display
+    ax2.axis('off')
 
-    # Visualize the min-heap as a tree structure
+    # Visualize heap and decisions
     visualize_min_heap(heap_state, ax3)
+    visualize_decisions(decisions, ax4)
 
 
 def determine_highlight_line(iteration):
-    """
-    Determine which pseudocode line to highlight based on the current iteration.
-    """
     if iteration == 0:
-        return 1  # Highlight the function initialization
+        return 1
     elif iteration == 1:
-        return 7  # Highlight "while Q is not empty"
+        return 7
     elif iteration == 2:
-        return 8  # Highlight "U <- extract min from Q"
+        return 8
     elif iteration == 3:
-        return 9  # Highlight "for each unvisited neighbor V"
+        return 9
     elif iteration == 4:
-        return 10  # Highlight distance comparison
+        return 10
     else:
-        return 13  # Final step or any remaining state
+        return 13
+
 
 def handle_key(event, iteration_data, graph, current_index, ax1, ax2, ax3):
     if event.key == 'right' and current_index[0] < len(iteration_data) - 1:
