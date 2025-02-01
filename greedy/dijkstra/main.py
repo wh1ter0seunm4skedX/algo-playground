@@ -1,4 +1,3 @@
-import random
 from dijkstra import dijkstra
 from graphs import choose_graph
 from graph_visualization import visualize_graph
@@ -17,6 +16,9 @@ if __name__ == "__main__":
         for spine in ax.spines.values():
             spine.set_edgecolor('black')
             spine.set_linewidth(2)
+
+    fig.add_artist(plt.Line2D([0.5, 0.5], [0, 1], color='black', lw=2))  # Vertical line
+    fig.add_artist(plt.Line2D([0, 1], [0.5, 0.5], color='black', lw=2))  # Horizontal line
 
     distances, predecessor, heap_state, iteration, current_node, decisions = iteration_data[0]
     visualize_graph(graph_data, distances, predecessor, heap_state, iteration, current_node, decisions, ax1, ax2, ax3, ax4)
