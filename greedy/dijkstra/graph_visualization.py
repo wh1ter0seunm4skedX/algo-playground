@@ -2,8 +2,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from pseudocode import pseudocode_lines
+from heap_visualization import visualize_min_heap
 
-def visualize_graph(graph, distances, predecessor, iteration, current_node, ax1, ax2):
+def visualize_graph(graph, distances, predecessor, heap_state, iteration, current_node, ax1, ax2, ax3):
     ax1.clear()  # Clear the graph plot
     ax2.clear()  # Clear the pseudocode plot
 
@@ -36,16 +37,17 @@ def visualize_graph(graph, distances, predecessor, iteration, current_node, ax1,
     ax1.legend(handles=legend_elements, loc='upper left')
     ax1.set_title(f"Iteration {iteration}: Visiting '{current_node}'")
 
-    # Determine which line of pseudocode to highlight
+    # Highlight the current step in the pseudocode
     highlight_line = determine_highlight_line(iteration)
-
-    # Draw pseudocode
     y = 1.0  # Y-position for text
     for i, line in enumerate(pseudocode_lines):
         color = 'red' if i == highlight_line else 'black'
         ax2.text(0.05, y, line, fontsize=10, family='monospace', color=color, verticalalignment='top')
-        y -= 0.07  # Move to the next line
-    ax2.axis('off')  # Turn off the axis for pseudocode display
+        y -= 0.07
+    ax2.axis('off')  # Turn off axis for pseudocode display
+
+    # Visualize the min-heap as a tree structure
+    visualize_min_heap(heap_state, ax3)
 
 
 def determine_highlight_line(iteration):
@@ -65,12 +67,12 @@ def determine_highlight_line(iteration):
     else:
         return 13  # Final step or any remaining state
 
-def handle_key(event, iteration_data, graph, current_index, ax1, ax2):
+def handle_key(event, iteration_data, graph, current_index, ax1, ax2, ax3):
     if event.key == 'right' and current_index[0] < len(iteration_data) - 1:
         current_index[0] += 1
     elif event.key == 'left' and current_index[0] > 0:
         current_index[0] -= 1
 
-    distances, predecessor, iteration, current_node = iteration_data[current_index[0]]
-    visualize_graph(graph, distances, predecessor, iteration, current_node, ax1, ax2)
+    distances, predecessor, heap_state, iteration, current_node = iteration_data[current_index[0]]
+    visualize_graph(graph, distances, predecessor, heap_state, iteration, current_node, ax1, ax2, ax3)
     plt.draw()  # Redraw the updated figure
