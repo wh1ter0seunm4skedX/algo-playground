@@ -1,6 +1,7 @@
+import random
 from dijkstra import dijkstra
 from graphs import choose_graph
-from graph_visualization import visualize_graph, handle_key
+from graph_visualization import visualize_graph
 import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
@@ -8,8 +9,15 @@ if __name__ == "__main__":
     start_node = 'A'
     iteration_data = dijkstra(graph_data, start_node)
 
-    # Create subplots
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(24, 7), gridspec_kw={'width_ratios': [2, 1, 1, 1]})
+    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+    ax1, ax2 = axes[0]
+    ax3, ax4 = axes[1]
+
+    for ax in [ax1, ax2, ax3, ax4]:
+        for spine in ax.spines.values():
+            spine.set_edgecolor('black')
+            spine.set_linewidth(2)
+
     distances, predecessor, heap_state, iteration, current_node, decisions = iteration_data[0]
     visualize_graph(graph_data, distances, predecessor, heap_state, iteration, current_node, decisions, ax1, ax2, ax3, ax4)
 
@@ -24,5 +32,8 @@ if __name__ == "__main__":
         visualize_graph(graph_data, distances, predecessor, heap_state, iteration, current_node, decisions, ax1, ax2, ax3, ax4)
         plt.draw()
 
+    manager = plt.get_current_fig_manager()
+    manager.set_window_title("Dijkstra Visualizer")
     plt.gcf().canvas.mpl_connect('key_press_event', handle_key)
+    plt.tight_layout()
     plt.show()

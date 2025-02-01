@@ -66,14 +66,3 @@ def determine_highlight_line(iteration):
         return 10
     else:
         return 13
-
-
-def handle_key(event, iteration_data, graph, current_index, ax1, ax2, ax3):
-    if event.key == 'right' and current_index[0] < len(iteration_data) - 1:
-        current_index[0] += 1
-    elif event.key == 'left' and current_index[0] > 0:
-        current_index[0] -= 1
-
-    distances, predecessor, heap_state, iteration, current_node = iteration_data[current_index[0]]
-    visualize_graph(graph, distances, predecessor, heap_state, iteration, current_node, ax1, ax2, ax3)
-    plt.draw()  # Redraw the updated figure
