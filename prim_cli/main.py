@@ -16,11 +16,11 @@ if __name__ == "__main__":
     
     graph = Graph(edges)
     
-    # Display initial graph
-    display_graph(edges, "Initial Graph")
-    
-    # Run Prim's algorithm
+    # Run Prim's algorithm and display steps in the CLI
     mst_edges = prim_algorithm(graph, start_node=0)
+    
+    # Display the initial graph
+    display_graph(edges, "Initial Graph")
     
     # Display the Minimum Spanning Tree
     display_graph(mst_edges, "Minimum Spanning Tree")
