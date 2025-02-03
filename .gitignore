@@ -7,3 +7,8 @@ graph_algorithms/dfs_visualizer/src/__pycache__/main.cpython-311.pyc
 graph_algorithms/dfs_visualizer/src/__pycache__/visualizer.cpython-311.pyc
 graph_algorithms/dfs_visualizer/src/__pycache__/main.cpython-311.pyc
 graph_algorithms/dfs_visualizer/src/__pycache__/visualizer.cpython-311.pyc
+prim_cli/__pycache__/cli_helper.cpython-311.pyc
+prim_cli/__pycache__/graph_generator.cpython-311.pyc
+prim_cli/__pycache__/graph_visualizer.cpython-311.pyc
+prim_cli/__pycache__/graph.cpython-311.pyc
+prim_cli/__pycache__/prim.cpython-311.pyc

@@ -8,8 +8,8 @@ def display_graph(edges, title, mst_edges=None):
     for node1, node2, weight in edges:
         G.add_edge(node1, node2, weight=weight)
     
-    # Get positions for the nodes
-    pos = nx.spring_layout(G)  # You can experiment with other layouts
+    # Set a fixed seed to ensure the layout is always the same
+    pos = nx.spring_layout(G, seed=42) 
     
     # Draw the nodes and edges
     plt.figure(figsize=(8, 6))
