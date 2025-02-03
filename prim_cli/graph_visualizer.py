@@ -2,6 +2,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 def display_graph(edges, title):
+    plt.clf()
+    
     G = nx.Graph()
     
     # Add edges with weights
@@ -12,10 +14,10 @@ def display_graph(edges, title):
     pos = nx.spring_layout(G)  # You can experiment with other layouts
     
     # Draw the nodes and edges
-    plt.figure(figsize=(8, 6))
     nx.draw(G, pos, with_labels=True, node_color="skyblue", node_size=2000, font_size=12, font_weight="bold")
     edge_labels = {(node1, node2): f"{weight}" for node1, node2, weight in edges}
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10, font_color="red")
     
     plt.title(title)
-    plt.show()
+    plt.show(block=True) 
+    plt.close() 
