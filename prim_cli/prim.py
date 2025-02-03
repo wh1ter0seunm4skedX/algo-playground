@@ -28,3 +28,5 @@ def prim_algorithm(graph, start_node):
     print_step("Minimum Spanning Tree constructed:")
     for edge in mst_edges:
         print_step(f"Edge {edge[0]} -> {edge[1]} with weight {edge[2]}")
+
+    return mst_edges  # Return MST edges to visualize

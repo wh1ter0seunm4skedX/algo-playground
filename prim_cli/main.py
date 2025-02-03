@@ -1,5 +1,6 @@
 from prim import prim_algorithm
 from graph import Graph
+from graph_visualizer import display_graph
 
 if __name__ == "__main__":
     # Graph definition
@@ -13,6 +14,13 @@ if __name__ == "__main__":
         (4, 0, 5)
     ]
     
-    # Initialize and run
     graph = Graph(edges)
-    prim_algorithm(graph, start_node=0)
+    
+    # Display initial graph
+    display_graph(edges, "Initial Graph")
+    
+    # Run Prim's algorithm
+    mst_edges = prim_algorithm(graph, start_node=0)
+    
+    # Display the Minimum Spanning Tree
+    display_graph(mst_edges, "Minimum Spanning Tree")
