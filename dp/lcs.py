@@ -42,6 +42,11 @@ def longestCommonSubsequence(A, B):
     # Reverse the LCS since we built it backwards
     lcs.reverse()
 
+    # Print the final DP matrix
+    print("\nFinal DP Matrix:")
+    for row in dp:
+        print(row)
+    
     # Return both the length and the actual LCS string
     return lcs_length, ''.join(lcs)
 
